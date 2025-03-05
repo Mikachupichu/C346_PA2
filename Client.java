@@ -1,4 +1,4 @@
-package C346_PA2;
+
 import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,14 +21,18 @@ public class Client extends Thread {
     private static int maxNbTransactions;      		/* Maximum number of transactions */
     private static Transactions [] transaction; 	        /* Transactions to be processed */
     private String clientOperation;    			/* sending or receiving */
+    private Object object;
+    private Object item;
        
 	/** Constructor method of Client class
  	 * 
      * @return 
      * @param
      */
-     Client(String operation)
+     Client(String operation, Object object, Object item)
      { 
+        this.object = object;
+        this.item = item;
        if (operation.equals("sending"))
        { 
            System.out.println("\n Initializing client sending application ...");
@@ -160,12 +164,15 @@ public class Client extends Thread {
         //	{ 
         // 	  Thread.yield(); 	/* Yield the cpu if the network input buffer is full */
         //  }
-                                              	
+            while(Network.getInBufferStatus().equals("full")) this.yield();
+            
+            synchronized(object) {
             transaction[i].setTransactionStatus("sent");   /* Set current transaction status */
            
             /* System.out.println("\n DEBUG : Client.sendTransactions() - sending transaction on account " + transaction[i].getAccountNumber()); */ 
             
             Network.send(transaction[i]);                            /* Transmit current transaction */
+            }
             i++;          
          }
          
@@ -188,8 +195,10 @@ public class Client extends Thread {
         	//	 Thread.yield(); 	/* Yield the cpu if the network output buffer is full */
         		 
         	// }
+
+            while(Network.getOutBufferStatus().equals("empty")) this.yield();
                                                                             	
-            Network.receive(transact);                               	/* Receive updated transaction from the network buffer */
+            synchronized(item) {Network.receive(transact);}                               	/* Receive updated transaction from the network buffer */
             
             /* System.out.println("\n DEBUG : Client.receiveTransactions() - receiving updated transaction on account " + transact.getAccountNumber()); */
             
@@ -227,13 +236,13 @@ public class Client extends Thread {
             sendTransactions();
             sendClientEndTime = System.currentTimeMillis();
             System.out.println("\n Terminating client sending thread - " + " Running time " + (sendClientEndTime - sendClientStartTime) + " milliseconds");
-            objNetwork.disconnect(objNetwork.getClientIP());
+            Network.disconnect(Network.getClientIP());
         } else if (getClientOperation().equals("receiving")) {   
             receiveClientStartTime = System.currentTimeMillis();
             receiveTransactions(transact);
             receiveClientEndTime = System.currentTimeMillis();
             System.out.println("\n Terminating client receiving thread - " + " Running time " + (receiveClientEndTime - receiveClientStartTime) + " milliseconds");
-            objNetwork.disconnect(objNetwork.getClientIP());
+            Network.disconnect(Network.getClientIP());
         }
     }
                 

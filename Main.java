@@ -19,7 +19,6 @@ public class Main {
     public static void main(String[] args) {
       Object object = new Object();
       Object item = new Object();
-      Object thing = new Object();
         
     	Network objNetwork = new Network( );            /* Activate the network */
         objNetwork.start();
@@ -31,9 +30,9 @@ public class Main {
         
       /*..............................................................................................................................................................*/
        
-      Server server1 = new Server("Thread1", object, item, thing);
+      Server server1 = new Server("Thread1", object, item);
       server1.start();
-      Server server2 = new Server("Thread2", object, item, thing);
+      Server server2 = new Server("Thread2", object, item);
       server2.start();
       
       try {

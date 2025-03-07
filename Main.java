@@ -34,6 +34,8 @@ public class Main {
       server1.start();
       Server server2 = new Server("Thread2");
       server2.start();
+      Server server3 = new Server("Thread3");
+      server3.start();
       
       try {
         objNetwork.join();
@@ -41,6 +43,7 @@ public class Main {
         objClient2.join();
         server1.join();
         server2.join();
+        server3.join();
       }  catch (InterruptedException e) {System.out.println("Done.");}
     }
     

@@ -27,8 +27,6 @@ public class Server extends Thread {
 	private String serverThreadId;				 /* Identification of the two server threads - Thread1, Thread2 */
 	private static String serverThreadRunningStatus1;	 /* Running status of thread 1 - idle, running, terminated */
 	private static String serverThreadRunningStatus2;	 /* Running status of thread 2 - idle, running, terminated */
-    Object object;
-    Object item;
   
     /** 
      * Constructor method of Client class
@@ -36,10 +34,8 @@ public class Server extends Thread {
      * @return 
      * @param stid
      */
-    Server(String stid, Object object, Object item)
+    Server(String stid)
     {
-        this.object = object;
-        this.item = item;
     	if ( !(Network.getServerConnectionStatus().equals("connected")))
     	{
     		System.out.println("\n Initializing the server ...");
@@ -280,13 +276,13 @@ public class Server extends Thread {
         	//	 Thread.yield(); 	/* Yield the cpu if the network input buffer is empty */
         	// }
         	 
-            while((Network.getInBufferStatus().equals("empty")) && !Network.getClientConnectionStatus().equals("disconnected")) this.yield();
+            // while((Network.getInBufferStatus().equals("empty")) && !Network.getClientConnectionStatus().equals("disconnected")) this.yield();
 
         	 if (!Network.getInBufferStatus().equals("empty"))
         	 { 
         		 /* System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber()); */
         		 
-        		 synchronized(object) {Network.transferIn(trans);}                              /* Transfer a transaction from the network input buffer */
+        		 Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
                 
         		 accIndex = findAccount(trans.getAccountNumber());
         		 /* Process deposit operation */
@@ -327,9 +323,9 @@ public class Server extends Thread {
         		
         		 /* System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber()); */
         		 
-                 while((Network.getOutBufferStatus().equals("full"))) this.yield();
+                 // while((Network.getOutBufferStatus().equals("full"))) this.yield();
 
-        		 synchronized(item) {Network.transferOut(trans);}                            		/* Transfer a completed transaction from the server to the network output buffer */
+        		 Network.transferOut(trans);                            		/* Transfer a completed transaction from the server to the network output buffer */
         		 setNumberOfTransactions( (getNumberOfTransactions() +  1) ); 	/* Count the number of transactions processed */
         	 }
          }

@@ -21,18 +21,14 @@ public class Client extends Thread {
     private static int maxNbTransactions;      		/* Maximum number of transactions */
     private static Transactions [] transaction; 	        /* Transactions to be processed */
     private String clientOperation;    			/* sending or receiving */
-    private Object object;
-    private Object item;
        
 	/** Constructor method of Client class
  	 * 
      * @return 
      * @param
      */
-     Client(String operation, Object object, Object item)
+     Client(String operation)
      { 
-        this.object = object;
-        this.item = item;
        if (operation.equals("sending"))
        { 
            System.out.println("\n Initializing client sending application ...");
@@ -164,15 +160,13 @@ public class Client extends Thread {
         //	{ 
         // 	  Thread.yield(); 	/* Yield the cpu if the network input buffer is full */
         //  }
-            while(Network.getInBufferStatus().equals("full")) this.yield();
+            // while(Network.getInBufferStatus().equals("full")) this.yield();
             
-            synchronized(object) {
             transaction[i].setTransactionStatus("sent");   /* Set current transaction status */
            
             /* System.out.println("\n DEBUG : Client.sendTransactions() - sending transaction on account " + transaction[i].getAccountNumber()); */ 
             
             Network.send(transaction[i]);                            /* Transmit current transaction */
-            }
             i++;          
          }
          
@@ -196,9 +190,9 @@ public class Client extends Thread {
         		 
         	// }
 
-            while(Network.getOutBufferStatus().equals("empty")) this.yield();
+            // while(Network.getOutBufferStatus().equals("empty")) this.yield();
                                                                             	
-            synchronized(item) {Network.receive(transact);}                               	/* Receive updated transaction from the network buffer */
+            Network.receive(transact);                               	/* Receive updated transaction from the network buffer */
             
             /* System.out.println("\n DEBUG : Client.receiveTransactions() - receiving updated transaction on account " + transact.getAccountNumber()); */
             

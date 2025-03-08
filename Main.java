@@ -17,9 +17,6 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-      Object object = new Object();
-      Object item = new Object();
-        
     	Network objNetwork = new Network( );            /* Activate the network */
         objNetwork.start();
 

@@ -114,7 +114,7 @@ public class Client extends Thread {
         }
         catch(FileNotFoundException e)
         {
-            System.out.println("File transaction.txt was not found");
+            System.out.println("File transaction2.txt was not found");
             System.out.println("or could not be opened.");
             System.exit(0);
         }
